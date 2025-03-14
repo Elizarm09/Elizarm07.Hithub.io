@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let audioContext, analyser, source, dataArray, bufferLength;
 
     // Definir la ruta base correcta
-    const basePath = "Canciones/categoria/";
+    const basePath = "Audio/Categorías/";
 
     // Configurar rutas de canciones
     const songs = {
@@ -55,47 +55,3 @@ document.addEventListener("DOMContentLoaded", () => {
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         }
     });
-
-    stopBtn.addEventListener("click", () => {
-        audioPlayer.pause();
-        audioPlayer.currentTime = 0;
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    });
-
-    downloadBtn.addEventListener("click", () => {
-        const link = document.createElement("a");
-        link.href = audioSource.src;
-        link.download = audioSource.src.split("/").pop();
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    });
-
-    function startVisualizer() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            source = audioContext.createMediaElementSource(audioPlayer);
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
-            analyser.fftSize = 256;
-            bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
-        }
-        drawVisualizer();
-    }
-
-    function drawVisualizer() {
-        requestAnimationFrame(drawVisualizer);
-        analyser.getByteFrequencyData(dataArray);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#fff";
-        let barWidth = (canvas.width / bufferLength) * 2.5;
-        let x = 0;
-        for (let i = 0; i < bufferLength; i++) {
-            let barHeight = dataArray[i] / 2;
-            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-            x += barWidth + 1;
-        }
-    }
-});
